@@ -52,6 +52,16 @@ public class CColoringProblem {
                 {0, 1, 0, 1, 0, 0}
         };
         game.solve(vertex, adjacency);
+
+        vertex = new char[]{'a', 'b', 'c', 'd', 'e'};
+        adjacency = new int[][]{
+                {0, 1, 0, 1, 0},
+                {1, 0, 1, 1, 0},
+                {0, 1, 0, 1, 0},
+                {1, 1, 1, 0, 1},
+                {0, 0, 0, 1, 0}
+        };
+        game.solve(vertex, adjacency);
     }
 
     private void solve(char[] vertex, int[][] adjacency) {
