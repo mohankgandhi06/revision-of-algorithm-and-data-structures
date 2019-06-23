@@ -12,20 +12,20 @@ public class DRodCutting {
 
         rod = 15;
         lengths = new int[]{1, 2, 3, 4};
-        prices = new int[]{2, 5, 7, 3};
-        System.out.println();
+        prices = new int[]{2, 3, 7, 3};
+        System.out.println("\n");
         game.solve(rod, lengths, prices);
 
         rod = 13;
         lengths = new int[]{1, 2, 3, 4};
-        prices = new int[]{2, 5, 7, 3};
-        System.out.println();
+        prices = new int[]{2, 4, 7, 3};
+        System.out.println("\n");
         game.solve(rod, lengths, prices);
 
         rod = 13;
         lengths = new int[]{8, 2, 6, 4};
-        prices = new int[]{12, 5, 8, 3};
-        System.out.println();
+        prices = new int[]{12, 4, 8, 3};
+        System.out.println("\n");
         game.solve(rod, lengths, prices);
     }
 
@@ -40,6 +40,8 @@ public class DRodCutting {
         System.out.println("Memoization Max Profit: " + solveWithMemoization(rod, lengths, prices, 0, memo));
         int[][] table = new int[ lengths.length + 1 ][ rod + 1 ];
         System.out.println("Tabulation Max Profit: " + solveWithTabulation(lengths, prices, table));
+        show(table);
+        showChoices(table, lengths);
     }
 
     private int solveWithBruteForce(int rod, int[] lengths, int[] prices, int currentIndex, int currentSum) {
@@ -75,5 +77,27 @@ public class DRodCutting {
             }
         }
         return table[ table.length - 1 ][ table[ 0 ].length - 1 ];
+    }
+
+    private void show(int[][] table) {
+        for (int row = 0; row < table.length; row++) {
+            for (int col = 0; col < table[ 0 ].length; col++) {
+                System.out.print(table[ row ][ col ] + " ");
+            }
+            System.out.println();
+        }
+    }
+
+    private void showChoices(int[][] table, int[] lengths) {
+        int row = table.length - 1;
+        int col = table[ 0 ].length - 1;
+        while (row >= 1 && col >= 0) {
+            if (table[ row ][ col ] != table[ row - 1 ][ col ]) {
+                System.out.print(lengths[ row - 1 ] + " ");
+                col = col - lengths[ row - 1 ];
+            } else {
+                row--;
+            }
+        }
     }
 }
