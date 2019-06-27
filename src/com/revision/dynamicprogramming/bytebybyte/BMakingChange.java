@@ -17,7 +17,7 @@ public class BMakingChange {
     private void solve(int[] cents, int total) {
         System.out.println("Total: " + total);
         System.out.println("Brute Force: " + solveWithBruteForce(cents, total, 0, 0));
-        Integer[][] memo = new Integer[ cents.length + 1 ][ total + 1 ];
+        Integer[][][] memo = new Integer[ cents.length + 1 ][ total + 1 ][ total + 1 ];
         System.out.println("Memoization: " + solveWithMemoization(cents, total, 0, 0, memo));
         int[][] table = new int[ cents.length + 1 ][ total + 1 ];
         System.out.println("Tabulation: " + solveWithTabulation(cents, table));
@@ -36,20 +36,20 @@ public class BMakingChange {
         return Math.min(include, exclude);
     }
 
-    private int solveWithMemoization(int[] cents, int total, int currentIndex, int coins, Integer[][] memo) {
+    private int solveWithMemoization(int[] cents, int total, int currentIndex, int coins, Integer[][][] memo) {
         if (currentIndex == cents.length) {
             if (total == 0) return coins;
             return Integer.MAX_VALUE;
         }
-        if (memo[ currentIndex ][ currentIndex ] == null) {
+        if (memo[ currentIndex ][ total ][ coins ] == null) {
             int include = Integer.MAX_VALUE;
             if (cents[ currentIndex ] <= total) {
-                include = solveWithBruteForce(cents, total - cents[ currentIndex ], currentIndex, coins + 1);
+                include = solveWithMemoization(cents, total - cents[ currentIndex ], currentIndex, coins + 1, memo);
             }
-            int exclude = solveWithBruteForce(cents, total, currentIndex + 1, coins);
-            memo[ currentIndex ][ currentIndex ] = Math.min(include, exclude);
+            int exclude = solveWithMemoization(cents, total, currentIndex + 1, coins, memo);
+            memo[ currentIndex ][ total ][ coins ] = Math.min(include, exclude);
         }
-        return memo[ currentIndex ][ currentIndex ];
+        return memo[ currentIndex ][ total ][ coins ];
     }
 
     private int solveWithTabulation(int[] cents, int[][] table) {
