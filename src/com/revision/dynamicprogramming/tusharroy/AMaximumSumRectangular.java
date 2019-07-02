@@ -31,6 +31,172 @@ public class AMaximumSumRectangular {
     }
 
     private void solve(int[][] matrix) {
+        System.out.println("Brute Force Method: ");
+        solveWithBruteForce(matrix);
+        System.out.println("________________________________");
+        System.out.println("Brute Force Recursive Method: ");
+        solveWithBruteForceRecursive(matrix);
+        System.out.println("________________________________");
+        System.out.println("Memoization Method: ");
+        solveWithBruteForceMemoization(matrix);
+        System.out.println("________________________________");
+        System.out.println("Tabulation Method: ");
+        solveWithTabulation(matrix);
+    }
+
+    private void solveWithBruteForce(int[][] matrix) {
+        int max = 0;
+        int[] coordinates = new int[ 4 ];
+        for (int row = 0; row < matrix.length; row++) {
+            for (int col = 0; col < matrix[ 0 ].length; col++) {
+                int[] result = findMaxSumSubMatrix(matrix, row, col);
+                max = Math.max(max, result[ 0 ]);
+                if (max == result[ 0 ]) {
+                    coordinates[ 0 ] = row;
+                    coordinates[ 1 ] = result[ 1 ];
+                    coordinates[ 2 ] = col;
+                    coordinates[ 3 ] = result[ 2 ];
+                }
+            }
+        }
+
+        System.out.println("Maximum Sum is " + max);
+        System.out.println("Length: from " + coordinates[ 0 ] + " to " + coordinates[ 1 ]);
+        System.out.println("Breadth: from " + coordinates[ 2 ] + " to " + coordinates[ 3 ]);
+        System.out.println("Sub Matrix is as follows: ");
+        for (int row = coordinates[ 0 ]; row <= coordinates[ 1 ]; row++) {
+            for (int col = coordinates[ 2 ]; col <= coordinates[ 3 ]; col++) {
+                System.out.print(matrix[ row ][ col ] + " ");
+            }
+            System.out.println();
+        }
+    }
+
+    private int[] findMaxSumSubMatrix(int[][] matrix, int row, int col) {
+        int sum = 0;
+        int xEnd = 0;
+        int yEnd = 0;
+        for (int r = row; r < matrix.length; r++) {
+            for (int c = col; c < matrix[ 0 ].length; c++) {
+                int temp = sum(matrix, row, col, r, c);
+                sum = Math.max(temp, sum);
+                if (temp == sum) {
+                    xEnd = r;
+                    yEnd = c;
+                }
+            }
+        }
+        int[] result = new int[ 3 ];
+        result[ 0 ] = sum;
+        result[ 1 ] = xEnd;
+        result[ 2 ] = yEnd;
+        return result;
+    }
+
+    private int sum(int[][] matrix, int row, int col, int r, int c) {
+        int sum = 0;
+        for (int vertical = row; vertical <= r; vertical++) {
+            for (int horizontal = col; horizontal <= c; horizontal++) {
+                sum += matrix[ vertical ][ horizontal ];
+            }
+        }
+        return sum;
+    }
+
+    private void solveWithBruteForceRecursive(int[][] matrix) {
+        int max = 0;
+        int[] coordinates = new int[ 4 ];
+        for (int row = 0; row < matrix.length; row++) {
+            for (int col = 0; col < matrix[ 0 ].length; col++) {
+                int[] result = findMaxSumSubMatrixRecursive(matrix, row, col, row, col);
+                max = Math.max(max, result[ 0 ]);
+                if (max == result[ 0 ]) {
+                    coordinates[ 0 ] = row;
+                    coordinates[ 1 ] = result[ 1 ];
+                    coordinates[ 2 ] = col;
+                    coordinates[ 3 ] = result[ 2 ];
+                }
+            }
+        }
+        show(matrix, max, coordinates);
+    }
+
+    private int[] findMaxSumSubMatrixRecursive(int[][] matrix, int row, int col, int r, int c) {
+        if (r == matrix.length && c >= 0) {
+            int[] result = new int[ 3 ];
+            result[ 0 ] = 0;
+            result[ 1 ] = 0;
+            result[ 2 ] = 0;
+            return result;
+        }
+        int[] recursiveResult = findMaxSumSubMatrixRecursive(matrix, row, col, c == matrix.length ? r + 1 : r, c == matrix.length ? col : c + 1);
+        int temp = sum(matrix, row, col, r, c);
+        return max(temp, recursiveResult, r, c);
+    }
+
+    private void solveWithBruteForceMemoization(int[][] matrix) {
+        int max = 0;
+        int[] coordinates = new int[ 4 ];
+        for (int row = 0; row < matrix.length; row++) {
+            for (int col = 0; col < matrix[ 0 ].length; col++) {
+                Result[][] memo = new Result[ matrix.length ][ matrix[ 0 ].length ];
+                int[] result = findMaxSumSubMatrixMemoization(matrix, row, col, row, col, memo);
+                max = Math.max(max, result[ 0 ]);
+                if (max == result[ 0 ]) {
+                    coordinates[ 0 ] = row;
+                    coordinates[ 1 ] = result[ 1 ];
+                    coordinates[ 2 ] = col;
+                    coordinates[ 3 ] = result[ 2 ];
+                }
+            }
+        }
+        show(matrix, max, coordinates);
+    }
+
+    private int[] findMaxSumSubMatrixMemoization(int[][] matrix, int row, int col, int r, int c, Result[][] memo) {
+        if (r == matrix.length && c >= 0) {
+            int[] result = new int[ 3 ];
+            result[ 0 ] = 0;
+            result[ 1 ] = 0;
+            result[ 2 ] = 0;
+            return result;
+        }
+        if (memo[ r ][ c ] == null) {
+            int[] recursiveResult = findMaxSumSubMatrixMemoization(matrix, row, col, c == matrix.length ? r + 1 : r, c == matrix.length ? col : c + 1, memo);
+            int temp = sum(matrix, row, col, r, c);
+            memo[ r ][ c ] = new Result(max(temp, recursiveResult, r, c));
+        }
+        return memo[ r ][ c ].getArr();
+    }
+
+    private int[] max(int temp, int[] recursiveResult, int r, int c) {
+        int[] result = new int[ 3 ];
+        if (temp > recursiveResult[ 0 ]) {
+            result[ 0 ] = temp;
+            result[ 1 ] = r;
+            result[ 2 ] = c;
+        } else {
+            result[ 0 ] = recursiveResult[ 0 ];
+            result[ 1 ] = recursiveResult[ 1 ];
+            result[ 2 ] = recursiveResult[ 2 ];
+        }
+        return result;
+    }
+
+    private void show(int[][] matrix, int max, int[] coordinates) {
+        System.out.println("Maximum Sum is " + max);
+        System.out.println("Length: from " + coordinates[ 0 ] + " to " + coordinates[ 1 ]);
+        System.out.println("Breadth: from " + coordinates[ 2 ] + " to " + coordinates[ 3 ]);
+        System.out.println("Sub Matrix is as follows: ");
+        for (int row = coordinates[ 0 ]; row <= coordinates[ 1 ]; row++) {
+            for (int col = coordinates[ 2 ]; col <= coordinates[ 3 ]; col++) {
+                System.out.print(matrix[ row ][ col ] + " ");
+            }
+            System.out.println();
+        }
+    }
+
+    private void solveWithTabulation(int[][] matrix) {
         int[] arr = new int[ matrix.length ];
         int maxSum = 0;
 
@@ -104,5 +270,21 @@ public class AMaximumSumRectangular {
         result[ 1 ] = startIndex;
         result[ 2 ] = endIndex;
         return result;
+    }
+}
+
+class Result {
+    private int[] arr;
+
+    public Result(int[] arr) {
+        this.arr = arr;
+    }
+
+    public int[] getArr() {
+        return arr;
+    }
+
+    public void setArr(int[] arr) {
+        this.arr = arr;
     }
 }

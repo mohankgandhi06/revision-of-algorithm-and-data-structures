@@ -17,7 +17,7 @@ public class BWordBreak {
         String word = "IAMACE";
         game.solve(word);
 
-        word = "IAMACESSTAR";
+        word = "IAMACESTAR";
         System.out.println();
         game.solve(word);
 
@@ -36,17 +36,42 @@ public class BWordBreak {
         word = "MAGICISRNATURE";
         System.out.println();
         game.solve(word);
-
-
     }
 
     private void solve(String word) {
         System.out.println("Can the entire characters be used to form a phrase? \n" + word);
-        System.out.print(wordSplit(word)?"Yes it can be split meaningfully":"No it can't be done");
+        System.out.print("Brute Force: " + (solveWithBruteForce(word, 0, "") ? "Yes it can be split meaningfully" : "No it can't be done"));
+        Boolean[][] memo = new Boolean[ word.length() ][ word.length() ];
+        System.out.print("\nMemoization: " + (solveWithMemoization(word, 0, "", memo) ? "Yes it can be split meaningfully" : "No it can't be done"));
+        System.out.print("\nTabulation: " + (solveWithTabulation(word) ? "Yes it can be split meaningfully" : "No it can't be done"));
         System.out.println();
     }
 
-    private boolean wordSplit(String word) {
+    private boolean solveWithBruteForce(String word, int currentIndex, String left) {
+        if (currentIndex == word.length()) {
+            return this.dictionary.containsValue(left);
+        }
+        if (this.dictionary.containsValue(left)) {
+            if (solveWithBruteForce(word, currentIndex, "")) {
+                return true;
+            }
+        }
+        return solveWithBruteForce(word, currentIndex + 1, left.concat(String.valueOf(word.charAt(currentIndex))));
+    }
+
+    private boolean solveWithMemoization(String word, int currentIndex, String left, Boolean[][] memo) {
+        if (currentIndex == word.length()) {
+            return this.dictionary.containsValue(left);
+        }
+        if (this.dictionary.containsValue(left)) {
+            if (solveWithBruteForce(word, currentIndex, "")) {
+                return true;
+            }
+        }
+        return solveWithBruteForce(word, currentIndex + 1, left.concat(String.valueOf(word.charAt(currentIndex))));
+    }
+
+    private boolean solveWithTabulation(String word) {
         boolean[][] table = new boolean[ word.length() ][ word.length() ];
         for (int position = 0; position < table.length; position++) {
             if (this.dictionary.containsValue(String.valueOf(word.charAt(position)))) {
@@ -73,12 +98,12 @@ public class BWordBreak {
                 }
             }
         }
-        for (int row = 0; row < table.length; row++) {
+        /*for (int row = 0; row < table.length; row++) {
             for (int col = 0; col < table[ 0 ].length; col++) {
                 System.out.print(table[ row ][ col ] ? "T " : "F ");
             }
             System.out.println();
-        }
+        }*/
         return table[ 0 ][ table[ 0 ].length - 1 ];
     }
 
