@@ -64,11 +64,11 @@ public class BWordBreak {
             return this.dictionary.containsValue(left);
         }
         if (this.dictionary.containsValue(left)) {
-            if (solveWithBruteForce(word, currentIndex, "")) {
+            if (solveWithMemoization(word, currentIndex, "", memo)) {
                 return true;
             }
         }
-        return solveWithBruteForce(word, currentIndex + 1, left.concat(String.valueOf(word.charAt(currentIndex))));
+        return solveWithMemoization(word, currentIndex + 1, left.concat(String.valueOf(word.charAt(currentIndex))), memo);
     }
 
     private boolean solveWithTabulation(String word) {
