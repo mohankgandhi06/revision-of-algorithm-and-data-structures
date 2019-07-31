@@ -25,7 +25,7 @@ public class CDeleteMiddleNode {
     private void solve(LinkedList linkedList, int deleteThisTerm) {
         ZUtilsLinkedList.show(linkedList, "Before Deleting");
         Node node = linkedList.head;
-        while (node != null && node.data != deleteThisTerm) {
+        while (node != null && !node.data.equals(deleteThisTerm)) {
             node = node.next;
         }
         if (node == null) {
