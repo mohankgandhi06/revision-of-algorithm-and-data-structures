@@ -101,6 +101,14 @@ class LinkedList<E> {
         }
         node.next = new Node<>(data);
     }
+
+    public void add(Node<E> data) {
+        Node<E> node = this.head;
+        while (node.next != null) {
+            node = node.next;
+        }
+        node.next = data;
+    }
 }
 
 class Node<E> {
