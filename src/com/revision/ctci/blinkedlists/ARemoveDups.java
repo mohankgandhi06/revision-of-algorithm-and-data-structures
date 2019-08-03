@@ -90,11 +90,19 @@ public class ARemoveDups {
 class LinkedList<E> {
     public Node<E> head;
 
+    public LinkedList() {
+        this.head = null;
+    }
+
     public LinkedList(Node<E> head) {
         this.head = head;
     }
 
     public void add(E data) {
+        if (this.head == null) {
+            this.head = new Node<>(data);
+            return;
+        }
         Node<E> node = this.head;
         while (node.next != null) {
             node = node.next;
@@ -103,6 +111,10 @@ class LinkedList<E> {
     }
 
     public void add(Node<E> data) {
+        if (this.head == null) {
+            this.head = data;
+            return;
+        }
         Node<E> node = this.head;
         while (node.next != null) {
             node = node.next;

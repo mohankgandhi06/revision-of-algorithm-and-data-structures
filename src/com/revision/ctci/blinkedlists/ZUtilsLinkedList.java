@@ -10,4 +10,13 @@ public class ZUtilsLinkedList {
         }
         System.out.println();
     }
+
+    public static void show(Node node, String mesage) {
+        System.out.println(mesage);
+        while (node != null) {
+            System.out.print(node.data + " ");
+            node = node.next;
+        }
+        System.out.println();
+    }
 }
