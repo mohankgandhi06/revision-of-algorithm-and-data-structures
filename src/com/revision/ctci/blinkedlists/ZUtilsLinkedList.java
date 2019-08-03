@@ -1,6 +1,8 @@
 package com.revision.ctci.blinkedlists;
 
-public class ZUtilsLinkedList {
+import java.util.Stack;
+
+public class ZUtilsLinkedList<E> {
     public static void show(LinkedList linkedList, String mesage) {
         System.out.println(mesage);
         Node node = linkedList.head;
@@ -18,5 +20,19 @@ public class ZUtilsLinkedList {
             node = node.next;
         }
         System.out.println();
+    }
+
+    public static LinkedList reverse(LinkedList linkedList) {
+        Stack stack = new Stack<>();
+        Node node = linkedList.head;
+        while (node != null) {
+            stack.push(node.data);
+            node = node.next;
+        }
+        LinkedList result = new LinkedList();
+        while (!stack.isEmpty()){
+            result.add(stack.pop());
+        }
+        return result;
     }
 }
