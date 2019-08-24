@@ -1,0 +1,15 @@
+-- Pattern of the SQL is as follows
+-- SELECT column_one, column_two, column_three FROM table_one
+-- JOIN (common_id, count_of_apartment_for_each_tenant) as table_two ON table_one.common_id = table_two.common_id WHERE counter > 1
+
+SELECT
+  Tenants.tenantid    ID,
+  Tenants.TenantName  NAME,
+  count_table.counter APARTMENTS_OWNED
+FROM (SELECT
+        tenantid,
+        COUNT(aptid) counter
+      from AptTenants
+      GROUP by AptTenants.TenantID) count_table
+  JOIN Tenants ON count_table.tenantid = Tenants.tenantid
+WHERE count_table.counter > 1;

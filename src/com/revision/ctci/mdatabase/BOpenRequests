@@ -1,0 +1,19 @@
+-- Pattern of the SQL is as follows
+-- SELECT building_id, building_name, COUNT(requests)
+-- FROM buildings LEFT OUTER JOIN buildings_with_open_requests
+-- GROUP BY buildings.building_id
+
+SELECT
+  Buildings.buildingid   ID,
+  Buildings.BuildingName BUILDING_NAME,
+  COUNT(sub.a_id)        OPEN_REQUESTS
+from Buildings
+  LEFT OUTER JOIN
+  (SELECT
+     Apartments.BuildingID b_id,
+     Apartments.aptid      a_id
+   from Requests
+     join Apartments on Requests.aptid = Apartments.AptID
+   WHERE Requests.Status = 'Open') sub
+    ON Buildings.BuildingID = sub.b_id
+GROUP BY Buildings.BuildingID;
